@@ -2,7 +2,7 @@
 
 from utils.language_engine.wordnet_hook import get_word_info
 from utils.language_engine.phi_bridge import query_phi3
-from utils.language_engine.mistral_bridge import mistral_summarize
+from utils.mistral_bridge import mistral_summarize
 from utils.language_engine.syntax_trainer import analyze_structure
 from utils.language_engine.core_brain import process_through_brains
 from utils.io_tools import load_config

@@ -22,7 +22,6 @@ for directory in [SOURCE_DIR, MODI_DIR, VALON_DIR, ENTROPY_DIR]:
 
 # Helper functions
 
-
 def query_chatgpt(prompt):
     try:
         config = load_config()
