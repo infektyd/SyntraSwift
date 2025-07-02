@@ -7,7 +7,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from utils.citation_handler import citation_handler
+from utils.citation_handler import citation_handler, DEFAULT_CITATION_PATH
 
 
 def test_citation_handler_writes(tmp_path):
@@ -30,3 +30,14 @@ def test_citation_handler_writes(tmp_path):
     citation_file.unlink()
     assert not citation_file.exists()
     mock_add.assert_called_once_with({"src": "doc"}, citation_file)
+
+
+def test_default_path_constant():
+    assert DEFAULT_CITATION_PATH == Path("memory_vault/citations.json")
+
+
+def test_citation_handler_default_path():
+    with patch("utils.citation_handler.add_citation") as mock_add:
+        result = citation_handler("resp", citation_info={"a": 1})
+    assert result == "resp"
+    mock_add.assert_called_once_with({"a": 1}, DEFAULT_CITATION_PATH)
