@@ -12,3 +12,5 @@ drift_logs/
 
 memory_vault.zip
 Requirements.txt
+.build/
+Package.resolved
