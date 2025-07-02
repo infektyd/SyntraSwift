@@ -5,8 +5,11 @@ from pathlib import Path
 
 SWIFT_SCRIPT = Path(__file__).resolve().parent.parent / "swift" / "BrainEngine.swift"
 
+# The Python layer relies on this single Swift script for symbolic reasoning.
+# Other experimental Swift packages have been removed in favor of this approach.
+
 def _run_swift(command: str, *args: str) -> str:
-    """Execute the Swift brain engine with the given command."""
+    """Execute the BrainEngine Swift script with the given command."""
     cmd = ["swift", str(SWIFT_SCRIPT), command]
     cmd.extend(args)
     result = subprocess.run(cmd, capture_output=True, text=True, check=True)

@@ -98,7 +98,9 @@ en_core_web_sm`).
 
 ## Swift components
 
-The `swift/` directory contains a small Swift module mirroring `load_config` and `memory_engine`. These utilities use `Codable` to read and write JSON in the same layout as the Python tools.
+The `swift/` directory contains a small Swift module mirroring `load_config` and `memory_engine`. These utilities use `Codable` to read and write JSON in the same layout as the Python tools. The Python runtime calls this script via `utils.reasoning_engine._run_swift`.
+
+An earlier attempt at a Swift Package has been removed to avoid confusion. All symbolic reasoning now flows through the script in `swift/`.
 
 
 ## API keys
