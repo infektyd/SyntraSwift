@@ -17,8 +17,16 @@ let package = Package(
         .target(name: "Valon", path: "Sources/Valon"),
         .target(name: "Modi", path: "Sources/Modi"),
         .target(name: "Drift", path: "Sources/Drift"),
-        .target(name: "MemoryEngine", path: "Sources/MemoryEngine"),
+        .target(
+            name: "MemoryEngine",
+            dependencies: ["Valon", "Modi", "Drift"],
+            path: "Sources/MemoryEngine"
+        ),
         .executableTarget(name: "SyntraSwiftCLI", dependencies: ["Valon", "Modi", "Drift", "MemoryEngine"], path: "swift"),
-        .testTarget(name: "SyntraSwiftTests", dependencies: ["SyntraSwiftCLI"], path: "Tests"),
+        .testTarget(
+            name: "SyntraSwiftTests",
+            dependencies: ["SyntraSwiftCLI", "Valon", "Modi", "Drift", "MemoryEngine"],
+            path: "Tests"
+        ),
     ]
 )
