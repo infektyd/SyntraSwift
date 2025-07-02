@@ -115,11 +115,7 @@ the repository's defaults. Environment variables `OPENAI_API_KEY` and
 
 SYNTRA stores metadata about document references in `memory_vault/citations.json`.
 Each entry maps an identifier to a source fragment so VALON and MODI can attach
-contextual citations. When calling `run_language_loop` or the underlying
-`process_through_brains`, you may provide optional `valon_citations` or
-`modi_citations` parameters with lists of these IDs. The inline notation
-`⧉[n]` will appear in VALON or MODI outputs to mark citation points so future
-drift analysis can audit the origins of symbolic data.
+contextual citations.
 ## License
 
 This repository is licensed under a custom Source View License.
