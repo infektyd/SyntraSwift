@@ -9,6 +9,7 @@ __pycache__/
 # Log directories
 entropy_logs/
 drift_logs/
+.build/
 
 memory_vault.zip
 Requirements.txt
