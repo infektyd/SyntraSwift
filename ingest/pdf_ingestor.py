@@ -4,8 +4,8 @@ import json
 from datetime import datetime
 from PyPDF2 import PdfReader
 import sys
-from utils.io_tools import load_config
 from utils.mistral_bridge import query_mistral
+from utils.io_tools import load_config
 from memory_engine import add_memory_node
 
 # Define consistent paths
