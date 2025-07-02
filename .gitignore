@@ -10,3 +10,5 @@ __pycache__/
 entropy_logs/
 drift_logs/
 
+memory_vault.zip
+Requirements.txt
