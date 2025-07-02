@@ -14,5 +14,6 @@
   "enable_drift_output": true,
   "log_symbolic_drift": true,
   "memory_mode": "flat",
-  "interpreter_output": true
+  "interpreter_output": true,
+  "telemetry_csv_path": "C:\\HWiNFO_logs\\syntra_runtime.csv"
 }
