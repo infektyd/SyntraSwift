@@ -5,6 +5,9 @@ struct SyntraConfig: Codable {
     var openaiApiBase: String?
     var openaiModel: String?
     var elevenlabsApiKey: String?
+    var appleLLMApiKey: String?
+    var appleLLMApiBase: String?
+    var useAppleLLM: Bool?
     var useMistralForValon: Bool?
     var preferredVoice: String?
     var driftRatio: [String: Double]?
@@ -47,6 +50,7 @@ func loadConfig(path: String = "config.json") throws -> SyntraConfig {
     let env = ProcessInfo.processInfo.environment
     if let val = env["OPENAI_API_KEY"] { cfg.openaiApiKey = val }
     if let val = env["ELEVENLABS_API_KEY"] { cfg.elevenlabsApiKey = val }
+    if let val = env["APPLE_LLM_API_KEY"] { cfg.appleLLMApiKey = val }
     return cfg
 }
 

@@ -32,7 +32,10 @@ Example `config.local.json`:
   "preferred_voice": "auto",
   "drift_ratio": { "valon": 0.7, "modi": 0.3 },
   "memory_mode": "flat",
-  "telemetry_csv_path": "C:\\HWiNFO_logs\\syntra_runtime.csv"
+  "telemetry_csv_path": "C:\\HWiNFO_logs\\syntra_runtime.csv",
+  "apple_llm_api_key": "apple-key",
+  "apple_llm_api_base": "https://api.apple.com/llm",
+  "use_apple_llm": true
 }
 ```
 
@@ -101,7 +104,9 @@ en_core_web_sm`).
 The repository includes a Swift Package named `SyntraSwift` providing `Valon`,
 `Modi`, `Drift`, and `MemoryEngine` modules. A CLI target under `swift/` exposes
 the `reflect_valon`, `reflect_modi`, `drift_average`, and
-`processThroughBrains` commands. The Python layer invokes this CLI through
+`processThroughBrains` commands. The CLI also includes `queryAppleLLM` in
+`AppleLLMBridge.swift`, allowing optional integration with Apple's free LLM
+API when `use_apple_llm` is enabled. The Python layer invokes this CLI through
 `utils.reasoning_engine._run_swift`, which runs:
 
 ```bash
@@ -113,9 +118,11 @@ swift run --package-path . SyntraSwiftCLI <command> <args>
 
 Configuration overrides can be placed in `config.local.json` using the same
 structure as `config.json`. The loader checks this file before falling back to
-the repository's defaults. Environment variables `OPENAI_API_KEY` and
-`ELEVENLABS_API_KEY` override any values from the file. You may also specify
-`openai_api_base` and `openai_model` here to point at a local LM Studio server.
+the repository's defaults. Environment variables `OPENAI_API_KEY`,
+`ELEVENLABS_API_KEY`, and `APPLE_LLM_API_KEY` override any values from the
+file. You may also specify `openai_api_base`, `openai_model`, or
+`apple_llm_api_base` here to point at custom endpoints. Enable Apple LLM
+integration by setting `use_apple_llm` to ``true`` in your configuration.
 
 ## Citations
 

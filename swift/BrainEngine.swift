@@ -48,9 +48,15 @@ func processThroughBrains(_ input: String) -> [String: Any] {
     logStage(stage: "valon_stage", output: valon, directory: "entropy_logs")
     let modi = reflect_modi(input)
     logStage(stage: "modi_stage", output: modi, directory: "entropy_logs")
-    let drift = drift_average(valon, modi)
+    var drift = drift_average(valon, modi)
     logStage(stage: "drift_stage", output: drift, directory: "drift_logs")
-    return ["valon": valon, "modi": modi, "drift": drift]
+
+    var result: [String: Any] = ["valon": valon, "modi": modi, "drift": drift]
+    if let cfg = try? loadConfig(), cfg.useAppleLLM == true {
+        let apple = queryAppleLLM(input)
+        result["appleLLM"] = apple
+    }
+    return result
 }
 
 func jsonString(_ obj: Any) -> String {
