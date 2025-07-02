@@ -18,6 +18,8 @@ previously stored in `config.json`, but this file is now only a template.
    variables override those in the file.
 3. If no override files exist, `load_config` reads the default `config.json`
    in the repository root.
+4. Set `telemetry_csv_path` to the location of your telemetry log CSV if you
+   want the bridge to monitor a custom file.
 
 Example `config.local.json`:
 ```json
@@ -29,7 +31,8 @@ Example `config.local.json`:
   "use_mistral_for_valon": true,
   "preferred_voice": "auto",
   "drift_ratio": { "valon": 0.7, "modi": 0.3 },
-  "memory_mode": "flat"
+  "memory_mode": "flat",
+  "telemetry_csv_path": "C:\\HWiNFO_logs\\syntra_runtime.csv"
 }
 ```
 

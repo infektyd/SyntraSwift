@@ -2,8 +2,10 @@ import pandas as pd
 import time
 import os
 
+from utils.io_tools import load_config
 
-CSV_PATH = r"C:\HWiNFO_logs\syntra_runtime.csv"
+CONFIG = load_config()
+CSV_PATH = CONFIG.get("telemetry_csv_path", r"C:\\HWiNFO_logs\\syntra_runtime.csv")
 FIELDS_OF_INTEREST = [
     "CPU Package Power [W]",
     "GPU Power [W]",
