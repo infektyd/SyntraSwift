@@ -98,9 +98,7 @@ en_core_web_sm`).
 
 ## Swift components
 
-The `swift/` directory contains a small Swift module mirroring `load_config` and `memory_engine`. These utilities use `Codable` to read and write JSON in the same layout as the Python tools. The Python runtime calls this script via `utils.reasoning_engine._run_swift`.
-
-An earlier attempt at a Swift Package has been removed to avoid confusion. All symbolic reasoning now flows through the script in `swift/`.
+The repository now includes a Swift Package named `SyntraSwift` providing `Valon`, `Modi`, `Drift`, and `MemoryEngine` modules. A CLI target under `swift/` offers command-line access, and Python scripts call this package via `utils.reasoning_engine._run_swift`.
 
 
 ## API keys
