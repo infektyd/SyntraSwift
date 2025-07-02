@@ -98,7 +98,15 @@ en_core_web_sm`).
 
 ## Swift components
 
-The repository now includes a Swift Package named `SyntraSwift` providing `Valon`, `Modi`, `Drift`, and `MemoryEngine` modules. A CLI target under `swift/` offers command-line access, and Python scripts call this package via `utils.reasoning_engine._run_swift`.
+The repository includes a Swift Package named `SyntraSwift` providing `Valon`,
+`Modi`, `Drift`, and `MemoryEngine` modules. A CLI target under `swift/` exposes
+the `reflect_valon`, `reflect_modi`, `drift_average`, and
+`processThroughBrains` commands. The Python layer invokes this CLI through
+`utils.reasoning_engine._run_swift`, which runs:
+
+```bash
+swift run --package-path . SyntraSwiftCLI <command> <args>
+```
 
 
 ## API keys

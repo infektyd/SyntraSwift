@@ -1,6 +1,6 @@
 import Foundation
 
-struct MemoryNode: Codable {
+public struct MemoryNode: Codable {
     var uid: String
     var timestamp: String?
     var path: String?
