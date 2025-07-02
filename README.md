@@ -96,6 +96,11 @@ Install them with `pip install openai elevenlabs PyPDF2 pandas spacy nltk`.
 Some modules may require model downloads (e.g. `python -m spacy download
 en_core_web_sm`).
 
+## Swift components
+
+The `swift/` directory contains a small Swift module mirroring `load_config` and `memory_engine`. These utilities use `Codable` to read and write JSON in the same layout as the Python tools.
+
+
 ## API keys
 
 Configuration overrides can be placed in `config.local.json` using the same
