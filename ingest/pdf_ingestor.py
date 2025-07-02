@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 from PyPDF2 import PdfReader
 import sys
-import subprocess
+from utils.mistral_bridge import query_mistral
 from utils.io_tools import load_config
 from memory_engine import add_memory_node
 
@@ -22,19 +22,6 @@ for directory in [SOURCE_DIR, MODI_DIR, VALON_DIR, ENTROPY_DIR]:
 
 # Helper functions
 
-def query_mistral(prompt):
-    try:
-        result = subprocess.run(
-            ["ollama", "run", "mistral", prompt],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            timeout=30
-        )
-        return result.stdout.strip()
-    except Exception as e:
-        print(f"[ERROR] Mistral query failed: {e}")
-        return f"Error: {str(e)}"
 
 def query_chatgpt(prompt):
     try:
