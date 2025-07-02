@@ -3,7 +3,7 @@ from typing import Any, Optional
 
 from utils.reasoning_engine import add_citation
 
-DEFAULT_CITATION_PATH = Path("entropy_logs/citations.json")
+DEFAULT_CITATION_PATH = Path("memory_vault/citations.json")
 
 def citation_handler(response: Any, citation_info: Optional[dict] = None, citation_path: Path = DEFAULT_CITATION_PATH):
     """Handle citation recording if citation_info is provided."""
