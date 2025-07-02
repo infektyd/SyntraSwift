@@ -1,0 +1,9 @@
+openai
+tiktoken
+python-dotenv
+sounddevice
+numpy
+fuzzywuzzy
+python-Levenshtein
+pyttsx3
+nltk

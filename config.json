@@ -1,0 +1,18 @@
+{
+  "openai_api_key": "lm-studio",
+  "openai_api_base": "http://localhost:1234/v1",
+  "openai_model": "phi-3-mini-4k-instruct",
+  "elevenlabs_api_key": "YOUR_ELEVENLABS_API_KEY",
+  "use_mistral_for_valon": true,
+  "preferred_voice": "auto",
+  "drift_ratio": {
+    "valon": 0.7,
+    "modi": 0.3
+  },
+  "enable_valon_output": true,
+  "enable_modi_output": true,
+  "enable_drift_output": true,
+  "log_symbolic_drift": true,
+  "memory_mode": "flat",
+  "interpreter_output": true
+}

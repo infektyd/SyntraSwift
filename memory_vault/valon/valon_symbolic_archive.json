@@ -1,0 +1,205 @@
+{
+  "drift_logs": [],
+  "symbolic_events": [
+    {
+      "source": "Volvo TAMD- 71A 72A Engine Parts manual catalog PDF Download (2).pdf",
+      "reflected": {
+        "symbolic_terms": [
+          "pulse",
+          "timing",
+          "inject"
+        ],
+        "emotions": [
+          "focused",
+          "mechanical",
+          "precise"
+        ],
+        "structure": "procedural/imperative",
+        "meaning": "engine system comprehension fragment"
+      },
+      "timestamp": "2025-04-20T21:20:17.697796"
+    },
+    {
+      "source": "Workshop Manual.pdf",
+      "reflected": {
+        "symbolic_terms": [
+          "pulse",
+          "timing",
+          "inject"
+        ],
+        "emotions": [
+          "focused",
+          "mechanical",
+          "precise"
+        ],
+        "structure": "procedural/imperative",
+        "meaning": "engine system comprehension fragment"
+      },
+      "timestamp": "2025-04-20T21:20:19.139272"
+    },
+    {
+      "source": "Fuel System.pdf",
+      "reflected": {
+        "symbolic_terms": [
+          "pulse",
+          "timing",
+          "inject"
+        ],
+        "emotions": [
+          "focused",
+          "mechanical",
+          "precise"
+        ],
+        "structure": "procedural/imperative",
+        "meaning": "engine system comprehension fragment"
+      },
+      "timestamp": "2025-04-20T21:20:19.511300"
+    },
+    {
+      "source": "Lubrication System.pdf",
+      "reflected": {
+        "symbolic_terms": [
+          "pulse",
+          "timing",
+          "inject"
+        ],
+        "emotions": [
+          "focused",
+          "mechanical",
+          "precise"
+        ],
+        "structure": "procedural/imperative",
+        "meaning": "engine system comprehension fragment"
+      },
+      "timestamp": "2025-04-20T21:20:19.594881"
+    },
+    {
+      "source": "1995 Dodge Ram Service Manual.pdf",
+      "reflected": {
+        "symbolic_terms": [
+          "understanding",
+          "mechanical",
+          "procedure"
+        ],
+        "emotions": [
+          "focused",
+          "technical",
+          "methodical"
+        ],
+        "structure": "procedural/informative",
+        "meaning": "vehicle maintenance knowledge"
+      },
+      "timestamp": "2025-05-12T21:04:21.065268"
+    },
+    {
+      "source": "1995 Dodge Ram Service Manual.pdf",
+      "reflected": {
+        "symbolic_terms": [
+          "understanding",
+          "mechanical",
+          "procedure"
+        ],
+        "emotions": [
+          "focused",
+          "technical",
+          "methodical"
+        ],
+        "structure": "procedural/informative",
+        "meaning": "vehicle maintenance knowledge"
+      },
+      "timestamp": "2025-05-12T21:11:09.997519"
+    },
+    {
+      "source": "1995 Dodge Ram Service Manual.pdf",
+      "reflected": {
+        "symbolic_terms": [
+          "understanding",
+          "mechanical",
+          "procedure"
+        ],
+        "emotions": [
+          "focused",
+          "technical",
+          "methodical"
+        ],
+        "structure": "procedural/informative",
+        "meaning": "vehicle maintenance knowledge"
+      },
+      "timestamp": "2025-05-12T21:15:58.790814"
+    },
+    {
+      "source": "1995 Dodge Ram Service Manual.pdf",
+      "reflected": {
+        "symbolic_terms": [
+          "understanding",
+          "mechanical",
+          "procedure"
+        ],
+        "emotions": [
+          "focused",
+          "technical",
+          "methodical"
+        ],
+        "structure": "procedural/informative",
+        "meaning": "vehicle maintenance knowledge"
+      },
+      "timestamp": "2025-05-12T21:21:37.377171"
+    },
+    {
+      "source": "1995 Dodge Ram Service Manual.pdf",
+      "reflected": {
+        "symbolic_terms": [
+          "understanding",
+          "mechanical",
+          "procedure"
+        ],
+        "emotions": [
+          "focused",
+          "technical",
+          "methodical"
+        ],
+        "structure": "procedural/informative",
+        "meaning": "vehicle maintenance knowledge"
+      },
+      "timestamp": "2025-05-12T21:29:05.731334"
+    },
+    {
+      "source": "1995 Dodge Ram Service Manual.pdf",
+      "reflected": {
+        "symbolic_terms": [
+          "understanding",
+          "mechanical",
+          "procedure"
+        ],
+        "emotions": [
+          "focused",
+          "technical",
+          "methodical"
+        ],
+        "structure": "procedural/informative",
+        "meaning": "vehicle maintenance knowledge"
+      },
+      "timestamp": "2025-05-12T21:53:01.226176"
+    },
+    {
+      "source": "1995 Dodge Ram Service Manual.pdf",
+      "reflected": {
+        "symbolic_terms": [
+          "understanding",
+          "mechanical",
+          "procedure"
+        ],
+        "emotions": [
+          "focused",
+          "technical",
+          "methodical"
+        ],
+        "structure": "procedural/informative",
+        "meaning": "vehicle maintenance knowledge"
+      },
+      "timestamp": "2025-05-13T11:28:21.454752"
+    }
+  ],
+  "reasoning_blends": [],
+  "dream_logs": []
+}

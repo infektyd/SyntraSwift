@@ -1,0 +1,54 @@
+import pandas as pd
+import time
+import os
+
+
+CSV_PATH = r"C:\HWiNFO_logs\syntra_runtime.csv"
+FIELDS_OF_INTEREST = [
+    "CPU Package Power [W]",
+    "GPU Power [W]",
+    "GPU Memory Usage [%]",
+    "Total GPU Power [% of TDP]",
+    "Core 0 T0 Usage [%]",
+    "Total CPU Usage [%]",
+    "Memory Usage [%]",
+    "Network: Intel I211AT - Total Bandwidth",
+]
+
+def extract_latest_metrics(csv_path):
+    if not os.path.exists(csv_path):
+        print("[SYNTRA][Telemetry] CSV not found.")
+        return {}
+
+    try:
+        df = pd.read_csv(csv_path)
+        latest = df.tail(1)
+
+        results = {}
+        for field in FIELDS_OF_INTEREST:
+            for col in latest.columns:
+                if field.lower() in col.lower():
+                    results[field] = latest[col].values[0]
+                    break
+
+        return results
+    except Exception as e:
+        print(f"[SYNTRA][Telemetry] Error reading log: {e}")
+        return {}
+
+def live_feed_to_syntra():
+    print("[SYNTRA][Telemetry] Bridge running...")
+    while True:
+        metrics = extract_latest_metrics(CSV_PATH)
+        if metrics:
+            print("[SYNTRA][Telemetry Feed]", metrics)  # Here we feed into cognition module
+            # Example: send_to_cognition(metrics)
+        time.sleep(2)  # Adjust based on polling rate
+
+def start_telemetry():
+    """Start the telemetry feed in a daemon thread."""
+    import threading
+
+    thread = threading.Thread(target=live_feed_to_syntra, daemon=True)
+    thread.start()
+    return thread
