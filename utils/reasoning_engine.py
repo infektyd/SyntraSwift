@@ -1,6 +1,16 @@
 import json
+import subprocess
 from datetime import datetime
 from pathlib import Path
+
+SWIFT_SCRIPT = Path(__file__).resolve().parent.parent / "swift" / "BrainEngine.swift"
+
+def _run_swift(command: str, *args: str) -> str:
+    """Execute the Swift brain engine with the given command."""
+    cmd = ["swift", str(SWIFT_SCRIPT), command]
+    cmd.extend(args)
+    result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+    return result.stdout.strip()
 
 def reflect_valon(content, citation_info=None):
     """Symbolic reasoning from Valon (Creative Core).
@@ -13,13 +23,7 @@ def reflect_valon(content, citation_info=None):
         Optional mapping with ``entry_id``, ``context`` and ``source`` keys to
         log citation data.
     """
-    if "warning" in content.lower():
-        return "cautious/alert"
-    elif "troubleshooting" in content.lower():
-        return "curious/focused"
-    elif "procedure" in content.lower():
-        return "structured/learning"
-    result = "neutral/observing"
+    result = _run_swift("reflect_valon", content)
 
     if citation_info:
         try:
@@ -35,14 +39,11 @@ def reflect_valon(content, citation_info=None):
 
 def reflect_modi(content, citation_info=None):
     """Systematic evaluation from Modi (Logical Core)."""
-    reasoning = []
-    if "if" in content and "then" in content:
-        reasoning.append("conditional_logic")
-    if "torque" in content or "psi" in content:
-        reasoning.append("mechanical_precision")
-    if "diagram" in content:
-        reasoning.append("visual_mapping")
-    result = reasoning if reasoning else ["baseline_analysis"]
+    output = _run_swift("reflect_modi", content)
+    try:
+        result = json.loads(output)
+    except Exception:
+        result = []
 
     if citation_info:
         try:
@@ -58,11 +59,11 @@ def reflect_modi(content, citation_info=None):
 
 def drift_average(valon, modi):
     """Merge creative and logical insight."""
-    return {
-        "emotion": valon,
-        "logic": modi,
-        "converged_state": f"{valon} + {', '.join(modi)}"
-    }
+    output = _run_swift("drift_average", valon, json.dumps(modi))
+    try:
+        return json.loads(output)
+    except Exception:
+        return {}
 
 def add_citation(info: dict, path: Path) -> None:
     """Append a citation record to the given JSON file."""
