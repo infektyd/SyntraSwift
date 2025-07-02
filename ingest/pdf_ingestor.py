@@ -185,7 +185,7 @@ def process_specific_file(filepath, link=False):
         print(f"[ERROR] {filepath} is not a PDF file")
 
 def main():
-    print("[BOOT] Cintra PDF Ingestor has started.")
+    print("[BOOT] Syntra PDF Ingestor has started.")
     link = '--link' in sys.argv
     if link:
         sys.argv.remove('--link')
