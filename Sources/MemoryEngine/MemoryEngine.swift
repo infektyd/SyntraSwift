@@ -82,23 +82,31 @@ public func queryAppleLLM(_ prompt: String, apiKey: String? = nil, apiBase: Stri
     ]
     request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
     let sem = DispatchSemaphore(value: 0)
-    var result = ""
+    final class Holder { var value: String = "" }
+    let resultHolder = Holder()
     URLSession.shared.dataTask(with: request) { data, _, _ in
-        defer { sem.signal() }
-        guard let data = data else { result = "[apple llm error]"; return }
-        if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-           let choices = json["choices"] as? [[String: Any]],
-           let message = choices.first?["message"] as? [String: Any],
-           let content = message["content"] as? String {
-            result = content
-        } else if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let err = json["error"] as? [String: Any],
-                  let msg = err["message"] as? String {
-            result = msg
+        let res: String
+        if let data = data {
+            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let choices = json["choices"] as? [[String: Any]],
+               let message = choices.first?["message"] as? [String: Any],
+               let content = message["content"] as? String {
+                res = content
+            } else if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                      let err = json["error"] as? [String: Any],
+                      let msg = err["message"] as? String {
+                res = msg
+            } else {
+                res = "[apple llm empty]"
+            }
         } else {
-            result = "[apple llm empty]"
+            res = "[apple llm error]"
         }
+        DispatchQueue.main.sync {
+            resultHolder.value = res
+        }
+        sem.signal()
     }.resume()
     sem.wait()
-    return result
+    return resultHolder.value
 }
