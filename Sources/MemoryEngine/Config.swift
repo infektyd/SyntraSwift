@@ -17,6 +17,8 @@ public struct SyntraConfig: Codable {
     public var telemetryCsvPath: String?
     public var useAppleLlm: Bool?
     public var appleLlmModel: String?
+    public var appleLLMApiKey: String?
+    public var appleLLMApiBase: String?
 }
 
 public enum ConfigError: Error {
@@ -53,5 +55,7 @@ public func loadConfig(path: String = "config.json") throws -> SyntraConfig {
     if let val = env["ELEVENLABS_API_KEY"] { cfg.elevenlabsApiKey = val }
     if let val = env["USE_APPLE_LLM"] { cfg.useAppleLlm = val.lowercased() == "true" }
     if let val = env["APPLE_LLM_MODEL"] { cfg.appleLlmModel = val }
+    if let val = env["APPLE_LLM_API_KEY"] { cfg.appleLLMApiKey = val }
+    if let val = env["APPLE_LLM_API_BASE"] { cfg.appleLLMApiBase = val }
     return cfg
 }
