@@ -1,8 +1,3 @@
-"""Interactive console for SYNTRA with detailed output.
-
-TODO: expand with additional telemetry hooks once MODI/VALON
-runtime APIs are finalized.
-"""
 from utils.repl import SyntraREPL
 from utils.language_engine.core_brain import symbolic_dream_loop
 
