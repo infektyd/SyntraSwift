@@ -1,4 +1,5 @@
 import Foundation
+import FoundationNetworking
 import Valon
 import Modi
 import Drift

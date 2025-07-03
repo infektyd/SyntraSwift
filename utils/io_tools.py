@@ -31,6 +31,7 @@ def load_config(path: str = "config.json") -> Dict:
     overrides = {
         "OPENAI_API_KEY": "openai_api_key",
         "ELEVENLABS_API_KEY": "elevenlabs_api_key",
+        "APPLE_LLM_API_KEY": "apple_llm_api_key",
         "APPLE_LLM_API_BASE": "apple_llm_api_base",
         "USE_APPLE_LLM": "use_apple_llm",
     }
