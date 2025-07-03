@@ -105,8 +105,12 @@ Key packages include:
 - `nltk` – provides WordNet lookups.
 - `requests` – needed by the Apple LLM and Phi‑3 bridges for HTTP calls.
 
-Some modules may require model downloads (e.g. `python -m spacy download
-en_core_web_sm`).
+Install them with `pip install openai tiktoken python-dotenv numpy fuzzywuzzy nltk`
+and any optional packages like `elevenlabs` or `spacy` as needed. Some modules
+may require model downloads (e.g. `python -m spacy download en_core_web_sm`).
+
+The project previously listed `sounddevice`, `pyttsx3` and `python-Levenshtein`
+in `Requirements.txt`, but these dependencies are no longer used.
 
 ## Swift components
 
@@ -136,6 +140,19 @@ Apple-provided local LLM using `apple_llm_api_base` and optionally
 2. Select the **SyntraSwiftCLI** scheme.
 3. Build the project and run the tests with **Product → Test**.
 
+### Testing
+
+Run the Python test suite with:
+
+```bash
+python -m pytest
+```
+
+Run the Swift package tests with:
+
+```bash
+swift test
+```
 
 ## API keys
 
