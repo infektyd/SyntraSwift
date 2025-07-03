@@ -119,6 +119,16 @@ also send the raw user input to `queryAppleLLM`. This helper calls an
 Apple-provided local LLM using `apple_llm_api_base` and optionally
 `apple_llm_api_key`.
 
+### Using Xcode
+
+1. Open the Swift package in Xcode:
+
+   ```bash
+   open Package.swift
+   ```
+2. Select the **SyntraSwiftCLI** scheme.
+3. Build the project and run the tests with **Product → Test**.
+
 
 ## API keys
 
