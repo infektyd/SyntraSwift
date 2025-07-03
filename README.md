@@ -139,6 +139,9 @@ Apple-provided local LLM using `apple_llm_api_base` and optionally
    ```
 2. Select the **SyntraSwiftCLI** scheme.
 3. Build the project and run the tests with **Product → Test**.
+4. In the scheme's **Run** settings, provide any command-line arguments for
+   `SyntraSwiftCLI` so choosing **Product → Run** launches the executable with
+   those parameters.
 
 ### Testing
 
