@@ -15,7 +15,6 @@ struct SyntraConfig: Codable {
     var memoryMode: String?
     var interpreterOutput: Bool?
     var telemetryCsvPath: String?
-    var appleLLMApiKey: String?
     var appleLLMApiBase: String?
     var useAppleLLM: Bool?
 }
@@ -46,7 +45,9 @@ func loadConfig(path: String = "config.json") throws -> SyntraConfig {
         throw ConfigError.notFound
     }
     let data = try Data(contentsOf: url)
-    var cfg = try JSONDecoder().decode(SyntraConfig.self, from: data)
+    let decoder = JSONDecoder()
+    decoder.keyDecodingStrategy = .convertFromSnakeCase
+    var cfg = try decoder.decode(SyntraConfig.self, from: data)
     let env = ProcessInfo.processInfo.environment
     if let val = env["OPENAI_API_KEY"] { cfg.openaiApiKey = val }
     if let val = env["ELEVENLABS_API_KEY"] { cfg.elevenlabsApiKey = val }
