@@ -88,7 +88,14 @@ Type `exit` or `quit` to close the console.
 
 ## Dependencies
 
-The core modules rely on the following Python packages:
+The core modules rely on several Python packages. The easiest way to install
+everything is to run:
+
+```bash
+pip install -r Requirements.txt
+```
+
+Key packages include:
 
 - `openai` – required for compatibility with LM Studio's local server.
 - `elevenlabs` – speech synthesis.
@@ -96,6 +103,7 @@ The core modules rely on the following Python packages:
 - `pandas` – used in `telemetry_bridge.py` to parse telemetry logs.
 - `spacy` – for linguistic analysis in the language engine.
 - `nltk` – provides WordNet lookups.
+- `requests` – needed by the Apple LLM and Phi‑3 bridges for HTTP calls.
 
 Install them with `pip install openai tiktoken python-dotenv numpy fuzzywuzzy nltk`
 and any optional packages like `elevenlabs` or `spacy` as needed. Some modules
