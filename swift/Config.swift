@@ -15,8 +15,8 @@ struct SyntraConfig: Codable {
     var memoryMode: String?
     var interpreterOutput: Bool?
     var telemetryCsvPath: String?
-    var useAppleLlm: Bool?
-    var appleLlmModel: String?
+    var appleLLMApiBase: String?
+    var useAppleLLM: Bool?
 }
 
 enum ConfigError: Error {
@@ -51,8 +51,8 @@ func loadConfig(path: String = "config.json") throws -> SyntraConfig {
     let env = ProcessInfo.processInfo.environment
     if let val = env["OPENAI_API_KEY"] { cfg.openaiApiKey = val }
     if let val = env["ELEVENLABS_API_KEY"] { cfg.elevenlabsApiKey = val }
-    if let val = env["USE_APPLE_LLM"] { cfg.useAppleLlm = val.lowercased() == "true" }
-    if let val = env["APPLE_LLM_MODEL"] { cfg.appleLlmModel = val }
+    if let val = env["APPLE_LLM_API_BASE"] { cfg.appleLLMApiBase = val }
+    if let val = env["USE_APPLE_LLM"] { cfg.useAppleLLM = (val as NSString).boolValue }
     return cfg
 }
 

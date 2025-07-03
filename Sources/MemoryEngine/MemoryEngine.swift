@@ -30,11 +30,11 @@ func logStage(stage: String, output: Any, directory: String) {
 }
 
 public func processThroughBrains(_ input: String) -> [String: Any] {
-    let config: SyntraConfig
+    let cfg: SyntraConfig
     do {
-        config = try loadConfig()
+        cfg = try loadConfig()
     } catch {
-        config = SyntraConfig()
+        cfg = SyntraConfig()
     }
     let valon = reflect_valon(input)
     logStage(stage: "valon_stage", output: valon, directory: "entropy_logs")
@@ -42,13 +42,12 @@ public func processThroughBrains(_ input: String) -> [String: Any] {
     logStage(stage: "modi_stage", output: modi, directory: "entropy_logs")
     let drift = drift_average(valon, modi)
     logStage(stage: "drift_stage", output: drift, directory: "drift_logs")
-    var result: [String: Any] = ["valon": valon, "modi": modi, "drift": drift]
-    if config.useAppleLlm == true {
-        let apple = queryAppleLLM(input)
-        logStage(stage: "apple_stage", output: apple, directory: "entropy_logs")
-        result["appleLLM"] = apple
-    }
-    return result
+    _ = queryAppleLLM(
+        input,
+        apiKey: cfg.appleLLMApiKey,
+        apiBase: cfg.appleLLMApiBase
+    )
+    return ["valon": valon, "modi": modi, "drift": drift]
 }
 
 public func jsonString(_ obj: Any) -> String {
@@ -57,4 +56,39 @@ public func jsonString(_ obj: Any) -> String {
         return str
     }
     return "{}"
+}
+
+public func queryAppleLLM(_ prompt: String, apiKey: String? = nil, apiBase: String? = nil) -> String {
+    let key = apiKey ?? ProcessInfo.processInfo.environment["APPLE_LLM_API_KEY"]
+    let base = apiBase ?? ProcessInfo.processInfo.environment["APPLE_LLM_API_BASE"] ?? "http://localhost:1234"
+    guard let url = URL(string: "\(base)/v1/chat/completions") else { return "[apple llm invalid url]" }
+    var request = URLRequest(url: url)
+    request.httpMethod = "POST"
+    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+    if let key = key { request.addValue("Bearer \(key)", forHTTPHeaderField: "Authorization") }
+    let payload: [String: Any] = [
+        "model": "apple",
+        "messages": [["role": "user", "content": prompt]],
+    ]
+    request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+    let sem = DispatchSemaphore(value: 0)
+    var result = ""
+    URLSession.shared.dataTask(with: request) { data, _, _ in
+        defer { sem.signal() }
+        guard let data = data else { result = "[apple llm error]"; return }
+        if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+           let choices = json["choices"] as? [[String: Any]],
+           let message = choices.first?["message"] as? [String: Any],
+           let content = message["content"] as? String {
+            result = content
+        } else if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let err = json["error"] as? [String: Any],
+                  let msg = err["message"] as? String {
+            result = msg
+        } else {
+            result = "[apple llm empty]"
+        }
+    }.resume()
+    sem.wait()
+    return result
 }
