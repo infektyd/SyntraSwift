@@ -3,6 +3,9 @@ import Valon
 import Modi
 import Drift
 
+// Allow overriding the Apple LLM query for testing
+public var queryAppleLLM: (String) -> String = { _ in "[apple_llm_placeholder]" }
+
 public struct MemoryEngine {
     public init() {}
 }
@@ -27,13 +30,25 @@ func logStage(stage: String, output: Any, directory: String) {
 }
 
 public func processThroughBrains(_ input: String) -> [String: Any] {
+    let config: SyntraConfig
+    do {
+        config = try loadConfig()
+    } catch {
+        config = SyntraConfig()
+    }
     let valon = reflect_valon(input)
     logStage(stage: "valon_stage", output: valon, directory: "entropy_logs")
     let modi = reflect_modi(input)
     logStage(stage: "modi_stage", output: modi, directory: "entropy_logs")
     let drift = drift_average(valon, modi)
     logStage(stage: "drift_stage", output: drift, directory: "drift_logs")
-    return ["valon": valon, "modi": modi, "drift": drift]
+    var result: [String: Any] = ["valon": valon, "modi": modi, "drift": drift]
+    if config.useAppleLlm == true {
+        let apple = queryAppleLLM(input)
+        logStage(stage: "apple_stage", output: apple, directory: "entropy_logs")
+        result["appleLLM"] = apple
+    }
+    return result
 }
 
 public func jsonString(_ obj: Any) -> String {

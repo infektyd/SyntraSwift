@@ -1,30 +1,30 @@
 import Foundation
 
-struct SyntraConfig: Codable {
-    var openaiApiKey: String?
-    var openaiApiBase: String?
-    var openaiModel: String?
-    var elevenlabsApiKey: String?
-    var useMistralForValon: Bool?
-    var preferredVoice: String?
-    var driftRatio: [String: Double]?
-    var enableValonOutput: Bool?
-    var enableModiOutput: Bool?
-    var enableDriftOutput: Bool?
-    var logSymbolicDrift: Bool?
-    var memoryMode: String?
-    var interpreterOutput: Bool?
-    var telemetryCsvPath: String?
-    var useAppleLlm: Bool?
-    var appleLlmModel: String?
+public struct SyntraConfig: Codable {
+    public var openaiApiKey: String?
+    public var openaiApiBase: String?
+    public var openaiModel: String?
+    public var elevenlabsApiKey: String?
+    public var useMistralForValon: Bool?
+    public var preferredVoice: String?
+    public var driftRatio: [String: Double]?
+    public var enableValonOutput: Bool?
+    public var enableModiOutput: Bool?
+    public var enableDriftOutput: Bool?
+    public var logSymbolicDrift: Bool?
+    public var memoryMode: String?
+    public var interpreterOutput: Bool?
+    public var telemetryCsvPath: String?
+    public var useAppleLlm: Bool?
+    public var appleLlmModel: String?
 }
 
-enum ConfigError: Error {
+public enum ConfigError: Error {
     case notFound
     case invalid
 }
 
-func loadConfig(path: String = "config.json") throws -> SyntraConfig {
+public func loadConfig(path: String = "config.json") throws -> SyntraConfig {
     let searchPaths = [
         "config/config.local.json",
         "config.local.json",
@@ -55,4 +55,3 @@ func loadConfig(path: String = "config.json") throws -> SyntraConfig {
     if let val = env["APPLE_LLM_MODEL"] { cfg.appleLlmModel = val }
     return cfg
 }
-
