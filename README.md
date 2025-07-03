@@ -97,9 +97,12 @@ The core modules rely on the following Python packages:
 - `spacy` – for linguistic analysis in the language engine.
 - `nltk` – provides WordNet lookups.
 
-Install them with `pip install openai elevenlabs PyPDF2 pandas spacy nltk`.
-Some modules may require model downloads (e.g. `python -m spacy download
-en_core_web_sm`).
+Install them with `pip install openai tiktoken python-dotenv numpy fuzzywuzzy nltk`
+and any optional packages like `elevenlabs` or `spacy` as needed. Some modules
+may require model downloads (e.g. `python -m spacy download en_core_web_sm`).
+
+The project previously listed `sounddevice`, `pyttsx3` and `python-Levenshtein`
+in `Requirements.txt`, but these dependencies are no longer used.
 
 ## Swift components
 
