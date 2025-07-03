@@ -34,6 +34,7 @@ Example `config.local.json`:
   "memory_mode": "flat",
   "telemetry_csv_path": "C:\\HWiNFO_logs\\syntra_runtime.csv",
   "apple_llm_api_base": "http://localhost:8080/v1",
+  "apple_llm_api_key": "apple-...",
   "use_apple_llm": false
 }
 ```
@@ -109,6 +110,12 @@ the `reflect_valon`, `reflect_modi`, `drift_average`, and
 ```bash
 swift run --package-path . SyntraSwiftCLI <command> <args>
 ```
+
+If `use_apple_llm` is enabled in `config.local.json` or via the
+`USE_APPLE_LLM` environment variable, the `processThroughBrains` CLI will
+also send the raw user input to `queryAppleLLM`. This helper calls an
+Apple-provided local LLM using `apple_llm_api_base` and optionally
+`apple_llm_api_key`.
 
 
 ## API keys
