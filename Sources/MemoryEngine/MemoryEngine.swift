@@ -49,7 +49,7 @@ public func processThroughBrains(_ input: String) -> [String: Any] {
         "modi": modi,
         "drift": drift,
     ]
-    if cfg.useAppleLlm == true {
+    if cfg.useAppleLLM == true {
         let apple = queryAppleLLM(
             input,
             cfg.appleLLMApiKey,
@@ -84,7 +84,10 @@ public func queryAppleLLM(_ prompt: String, apiKey: String? = nil, apiBase: Stri
     let sem = DispatchSemaphore(value: 0)
     final class Holder { var value: String = "" }
     let resultHolder = Holder()
-    URLSession.shared.dataTask(with: request) { data, _, _ in
+    let config = URLSessionConfiguration.default
+    config.timeoutIntervalForRequest = 10
+    let session = URLSession(configuration: config)
+    session.dataTask(with: request) { data, _, _ in
         let res: String
         if let data = data {
             if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -107,6 +110,8 @@ public func queryAppleLLM(_ prompt: String, apiKey: String? = nil, apiBase: Stri
         }
         sem.signal()
     }.resume()
-    sem.wait()
+    if sem.wait(timeout: .now() + 10) == .timedOut {
+        return "[apple llm timeout]"
+    }
     return resultHolder.value
 }

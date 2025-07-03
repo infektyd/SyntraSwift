@@ -17,7 +17,29 @@ struct SyntraConfig: Codable {
     var telemetryCsvPath: String?
     var appleLLMApiKey: String?
     var appleLLMApiBase: String?
+    var appleLLMModel: String?
     var useAppleLLM: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case openaiApiKey
+        case openaiApiBase
+        case openaiModel
+        case elevenlabsApiKey
+        case useMistralForValon
+        case preferredVoice
+        case driftRatio
+        case enableValonOutput
+        case enableModiOutput
+        case enableDriftOutput
+        case logSymbolicDrift
+        case memoryMode
+        case interpreterOutput
+        case telemetryCsvPath
+        case appleLLMApiKey = "apple_llm_api_key"
+        case appleLLMApiBase = "apple_llm_api_base"
+        case appleLLMModel = "apple_llm_model"
+        case useAppleLLM = "use_apple_llm"
+    }
 }
 
 enum ConfigError: Error {
@@ -47,11 +69,11 @@ func loadConfig(path: String = "config.json") throws -> SyntraConfig {
     }
     let data = try Data(contentsOf: url)
     let decoder = JSONDecoder()
-    decoder.keyDecodingStrategy = .convertFromSnakeCase
     var cfg = try decoder.decode(SyntraConfig.self, from: data)
     let env = ProcessInfo.processInfo.environment
     if let val = env["OPENAI_API_KEY"] { cfg.openaiApiKey = val }
     if let val = env["ELEVENLABS_API_KEY"] { cfg.elevenlabsApiKey = val }
+    if let val = env["APPLE_LLM_MODEL"] { cfg.appleLLMModel = val }
     if let val = env["APPLE_LLM_API_KEY"] { cfg.appleLLMApiKey = val }
     if let val = env["APPLE_LLM_API_BASE"] { cfg.appleLLMApiBase = val }
     if let val = env["USE_APPLE_LLM"] { cfg.useAppleLLM = (val as NSString).boolValue }
