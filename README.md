@@ -132,6 +132,19 @@ Apple-provided local LLM using `apple_llm_api_base` and optionally
 2. Select the **SyntraSwiftCLI** scheme.
 3. Build the project and run the tests with **Product → Test**.
 
+### Testing
+
+Run the Python test suite with:
+
+```bash
+python -m pytest
+```
+
+Run the Swift package tests with:
+
+```bash
+swift test
+```
 
 ## API keys
 
