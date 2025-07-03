@@ -75,8 +75,10 @@ final class SyntraSwiftTests: XCTestCase {
 
     func testProcessThroughBrainsAppleLLM() throws {
         setenv("USE_APPLE_LLM", "true", 1)
+        queryAppleLLM = { _, _, _ in "apple" }
         let result = processThroughBrains("hi")
         unsetenv("USE_APPLE_LLM")
-        XCTAssertNil(result["appleLLM"])
+        queryAppleLLM = { _, _, _ in "[apple_llm_placeholder]" }
+        XCTAssertEqual(result["appleLLM"] as? String, "apple")
     }
 }

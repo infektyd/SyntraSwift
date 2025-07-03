@@ -20,6 +20,8 @@ previously stored in `config.json`, but this file is now only a template.
    in the repository root.
 4. Set `telemetry_csv_path` to the location of your telemetry log CSV if you
    want the bridge to monitor a custom file.
+5. To enable Apple's local LLM, define `apple_llm_api_base` and optionally
+   `apple_llm_api_key` in your configuration or environment variables.
 
 Example `config.local.json`:
 ```json
