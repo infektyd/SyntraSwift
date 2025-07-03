@@ -32,7 +32,9 @@ Example `config.local.json`:
   "preferred_voice": "auto",
   "drift_ratio": { "valon": 0.7, "modi": 0.3 },
   "memory_mode": "flat",
-  "telemetry_csv_path": "C:\\HWiNFO_logs\\syntra_runtime.csv"
+  "telemetry_csv_path": "C:\\HWiNFO_logs\\syntra_runtime.csv",
+  "apple_llm_api_base": "http://localhost:8080/v1",
+  "use_apple_llm": false
 }
 ```
 
