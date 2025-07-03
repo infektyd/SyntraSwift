@@ -7,8 +7,10 @@ from utils.language_engine import (
     reflect_valon,
     reflect_modi,
     drift_average,
+    query_apple_llm,
 )
 from utils.symbolic_drift import log_symbolic_drift
+from utils.io_tools import load_config
 import json
 import os
 from datetime import datetime
@@ -59,12 +61,23 @@ def _drift_stage(valon_output, modi_output):
 
 def process_through_brains(input_data, citation_info=None):
     """Run the VALON, MODI and DRIFT stages in sequence."""
+    cfg = load_config()
     valon_output = _valon_stage(input_data, citation_info=citation_info)
     modi_output = _modi_stage(input_data, citation_info=citation_info)
     drift_output = _drift_stage(valon_output, modi_output)
 
     # Track drift between flat vault and DAG snapshot
     log_symbolic_drift(valon_output, modi_output)
+
+    if cfg.get("use_apple_llm"):
+        try:
+            query_apple_llm(
+                input_data,
+                api_key=cfg.get("apple_llm_api_key"),
+                base_url=cfg.get("apple_llm_api_base"),
+            )
+        except Exception:
+            pass
 
     return {
         "valon": valon_output,
