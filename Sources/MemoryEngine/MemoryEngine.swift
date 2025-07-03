@@ -3,6 +3,9 @@ import Valon
 import Modi
 import Drift
 
+// Allow overriding the Apple LLM query for testing
+public var queryAppleLLM: (String) -> String = { _ in "[apple_llm_placeholder]" }
+
 public struct MemoryEngine {
     public init() {}
 }
