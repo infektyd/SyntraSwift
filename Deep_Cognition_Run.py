@@ -16,7 +16,6 @@ from PyPDF2 import PdfReader
 #from ingest.pdf_ingestor import load_new_pdfs
 from utils.pdf_ingest import watch_pdf_folder
 from utils.mistral_bridge import query_mistral
-from utils.drift_logger import log_drift
 from utils.entropy_guard import log_entropy_drift, trigger_dream
 from utils.language_engine import (
     reflect_valon,

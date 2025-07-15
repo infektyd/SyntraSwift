@@ -61,14 +61,14 @@ final class SyntraSwiftTests: XCTestCase {
         """
         try json.write(to: tmp, atomically: true, encoding: .utf8)
         var cfg = try loadConfig(path: tmp.path)
-        XCTAssertEqual(cfg.useAppleLlm, true)
-        XCTAssertEqual(cfg.appleLlmModel, "test-model")
+        XCTAssertEqual(cfg.useAppleLLM, true)
+        XCTAssertEqual(cfg.appleLLMModel, "test-model")
 
         setenv("USE_APPLE_LLM", "false", 1)
         setenv("APPLE_LLM_MODEL", "env-model", 1)
         cfg = try loadConfig(path: tmp.path)
-        XCTAssertEqual(cfg.useAppleLlm, false)
-        XCTAssertEqual(cfg.appleLlmModel, "env-model")
+        XCTAssertEqual(cfg.useAppleLLM, false)
+        XCTAssertEqual(cfg.appleLLMModel, "env-model")
         unsetenv("USE_APPLE_LLM")
         unsetenv("APPLE_LLM_MODEL")
     }
