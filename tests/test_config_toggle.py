@@ -21,6 +21,7 @@ def _import_language_core():
     """Import language_core with helper load_config patched."""
     with patch("utils.io_tools.load_config", return_value={}):
         import utils.language_engine.language_core as lc
+
         reload(lc)
     return lc
 
@@ -32,12 +33,15 @@ def test_run_language_loop_prints():
         "enable_modi_output": True,
         "enable_drift_output": True,
     }
-    with patch.object(lc, "mistral_summarize", return_value="mistral"), \
-         patch.object(lc, "query_phi3", return_value="chat"), \
-         patch.object(lc, "get_word_info", return_value={}), \
-         patch.object(lc, "analyze_structure", return_value={}), \
-         patch.object(lc, "process_through_brains") as mock_process, \
-         patch.object(lc, "load_config", return_value=cfg):
+    with patch.object(lc, "mistral_summarize", return_value="mistral"), patch.object(
+        lc, "query_phi3", return_value="chat"
+    ), patch.object(lc, "get_word_info", return_value={}), patch.object(
+        lc, "analyze_structure", return_value={}
+    ), patch.object(
+        lc, "process_through_brains"
+    ) as mock_process, patch.object(
+        lc, "load_config", return_value=cfg
+    ):
         mock_process.return_value = {"valon": "VAL", "modi": "MOD", "drift": "DRIFT"}
         buf = StringIO()
         with redirect_stdout(buf):
@@ -57,12 +61,15 @@ def test_run_language_loop_suppresses():
         "enable_modi_output": False,
         "enable_drift_output": False,
     }
-    with patch.object(lc, "mistral_summarize", return_value="mistral"), \
-         patch.object(lc, "query_phi3", return_value="chat"), \
-         patch.object(lc, "get_word_info", return_value={}), \
-         patch.object(lc, "analyze_structure", return_value={}), \
-         patch.object(lc, "process_through_brains") as mock_process, \
-         patch.object(lc, "load_config", return_value=cfg):
+    with patch.object(lc, "mistral_summarize", return_value="mistral"), patch.object(
+        lc, "query_phi3", return_value="chat"
+    ), patch.object(lc, "get_word_info", return_value={}), patch.object(
+        lc, "analyze_structure", return_value={}
+    ), patch.object(
+        lc, "process_through_brains"
+    ) as mock_process, patch.object(
+        lc, "load_config", return_value=cfg
+    ):
         mock_process.return_value = {"valon": "VAL", "modi": "MOD", "drift": "DRIFT"}
         buf = StringIO()
         with redirect_stdout(buf):
@@ -81,12 +88,15 @@ def test_run_language_loop_debug_trace():
         "enable_modi_output": True,
         "enable_drift_output": True,
     }
-    with patch.object(lc, "mistral_summarize", return_value="mistral"), \
-         patch.object(lc, "query_phi3", return_value="chat"), \
-         patch.object(lc, "get_word_info", return_value={}), \
-         patch.object(lc, "analyze_structure", return_value={}), \
-         patch.object(lc, "process_through_brains") as mock_process, \
-         patch.object(lc, "load_config", return_value=cfg):
+    with patch.object(lc, "mistral_summarize", return_value="mistral"), patch.object(
+        lc, "query_phi3", return_value="chat"
+    ), patch.object(lc, "get_word_info", return_value={}), patch.object(
+        lc, "analyze_structure", return_value={}
+    ), patch.object(
+        lc, "process_through_brains"
+    ) as mock_process, patch.object(
+        lc, "load_config", return_value=cfg
+    ):
         mock_process.return_value = {"valon": "VAL", "modi": "MOD", "drift": "DRIFT"}
         buf = StringIO()
         with redirect_stdout(buf):
@@ -106,12 +116,15 @@ def test_debug_trace_respects_config_flags():
         "enable_modi_output": False,
         "enable_drift_output": False,
     }
-    with patch.object(lc, "mistral_summarize", return_value="mistral"), \
-         patch.object(lc, "query_phi3", return_value="chat"), \
-         patch.object(lc, "get_word_info", return_value={}), \
-         patch.object(lc, "analyze_structure", return_value={}), \
-         patch.object(lc, "process_through_brains") as mock_process, \
-         patch.object(lc, "load_config", return_value=cfg):
+    with patch.object(lc, "mistral_summarize", return_value="mistral"), patch.object(
+        lc, "query_phi3", return_value="chat"
+    ), patch.object(lc, "get_word_info", return_value={}), patch.object(
+        lc, "analyze_structure", return_value={}
+    ), patch.object(
+        lc, "process_through_brains"
+    ) as mock_process, patch.object(
+        lc, "load_config", return_value=cfg
+    ):
         mock_process.return_value = {"valon": "VAL", "modi": "MOD", "drift": "DRIFT"}
         buf = StringIO()
         with redirect_stdout(buf):
@@ -149,7 +162,29 @@ def test_get_word_info_no_nltk(monkeypatch):
     monkeypatch.setitem(sys.modules, "nltk", None)
     import importlib
     import utils.language_engine.wordnet_hook as wh
+
     importlib.reload(wh)
 
     assert wh.wordnet is None
     assert wh.get_word_info("dog") is None
+
+
+def test_run_swift_error_logged(tmp_path, monkeypatch):
+    """_run_swift returns an error string and logs when the subprocess fails."""
+    import utils.reasoning_engine as re
+    import subprocess
+
+    monkeypatch.chdir(tmp_path)
+    err = subprocess.CalledProcessError(1, ["swift"], stderr="boom")
+    with patch("subprocess.run", side_effect=err):
+        result = re._run_swift("reflect_valon", "test")
+
+    assert result.startswith("ERROR: Swift command failed")
+    log_file = tmp_path / "entropy_logs" / "run_swift_errors.json"
+    assert log_file.exists()
+    with open(log_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    entry = data[-1]
+    assert entry["command"] == "reflect_valon"
+    assert entry["args"] == ["test"]
+    assert "boom" in entry["error"]
