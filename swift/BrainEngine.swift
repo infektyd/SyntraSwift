@@ -11,7 +11,7 @@ func logStage(stage: String, output: Any, directory: String) {
        let j = try? JSONSerialization.jsonObject(with: d) as? [[String: Any]] {
         data = j
     }
-    var entry: [String: Any] = ["timestamp": ISO8601DateFormatter().string(from: Date()),
+    let entry: [String: Any] = ["timestamp": ISO8601DateFormatter().string(from: Date()),
                                 "output": output]
     data.append(entry)
     if let out = try? JSONSerialization.data(withJSONObject: data, options: [.prettyPrinted]) {
@@ -48,13 +48,28 @@ func processThroughBrains(_ input: String) -> [String: Any] {
     logStage(stage: "valon_stage", output: valon, directory: "entropy_logs")
     let modi = reflect_modi(input)
     logStage(stage: "modi_stage", output: modi, directory: "entropy_logs")
-    var drift = drift_average(valon, modi)
+    let drift = drift_average(valon, modi)
     logStage(stage: "drift_stage", output: drift, directory: "drift_logs")
 
     var result: [String: Any] = ["valon": valon, "modi": modi, "drift": drift]
     if let cfg = try? loadConfig(), cfg.useAppleLLM == true {
         let apple = queryAppleLLM(input)
         result["appleLLM"] = apple
+    }
+    if let flag = ProcessInfo.processInfo.environment["USE_FOUNDATION_MODEL"],
+       flag == "1" {
+        if #available(macOS 15.0, *) {
+            let sem = DispatchSemaphore(value: 0)
+            var fmResult = ""
+            Task {
+                fmResult = (try? await queryFoundationModel(input)) ?? "[foundation model error]"
+                sem.signal()
+            }
+            _ = sem.wait(timeout: .now() + 15)
+            result["foundationModel"] = fmResult
+        } else {
+            result["foundationModel"] = "[foundation model unavailable]"
+        }
     }
     return result
 }
