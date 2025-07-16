@@ -20,7 +20,9 @@ previously stored in `config.json`, but this file is now only a template.
    in the repository root.
 4. Set `telemetry_csv_path` to the location of your telemetry log CSV if you
    want the bridge to monitor a custom file.
-5. To enable Apple's local LLM, define `apple_llm_api_base` and optionally
+5. Telemetry requires the optional `pandas` package. If it is missing, the
+   bridge prints a warning and continues without monitoring.
+6. To enable Apple's local LLM, define `apple_llm_api_base` and optionally
    `apple_llm_api_key` in your configuration or environment variables.
 
 Example `config.local.json`:
@@ -100,7 +102,8 @@ Key packages include:
 - `openai` – required for compatibility with LM Studio's local server.
 - `elevenlabs` – speech synthesis.
 - `PyPDF2` – PDF text extraction.
-- `pandas` – used in `telemetry_bridge.py` to parse telemetry logs.
+- `pandas` – used in `telemetry_bridge.py` to parse telemetry logs. This
+  package is optional; without it the telemetry bridge is disabled.
 - `spacy` – for linguistic analysis in the language engine.
 - `nltk` – provides WordNet lookups.
 - `requests` – needed by the Apple LLM and Phi‑3 bridges for HTTP calls.

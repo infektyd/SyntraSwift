@@ -6,6 +6,8 @@ import threading
 def main() -> None:
     """Entry point for running SYNTRA with background telemetry."""
     telemetry_thread = start_telemetry()
+    if telemetry_thread is not None:
+        print("[SYNTRA] Telemetry thread active")
     pdf_thread = threading.Thread(target=watch_pdf_folder, daemon=True)
     pdf_thread.start()
     run_loop()
