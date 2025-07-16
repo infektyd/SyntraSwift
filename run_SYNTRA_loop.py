@@ -5,7 +5,6 @@ import json
 import os
 import uuid
 from utils.repl import SyntraREPL
-from utils.language_engine.core_brain import process_through_brains
 from utils.language_engine.voice_bridge import speak_text
 from utils.io_tools import load_config
 import syntra_interpreter
@@ -49,13 +48,19 @@ def main() -> None:
     """Run an input loop that speaks the final drift output."""
     config = load_config()
 
+    repl = SyntraREPL(
+        show_valon=config.get("enable_valon_output", True),
+        show_modi=config.get("enable_modi_output", True),
+        show_drift=config.get("enable_drift_output", True),
+    )
+
     def _post_cycle(user_input, drift_output):
         try:
             speak_text(drift_output)
         except Exception as exc:  # pragma: no cover - best effort logging
             print(f"[SYNTRA] Error during speech synthesis: {exc}")
 
-        cognition = process_through_brains(user_input)
+        cognition = repl.last_cognition
         node_map = serialize_memory(cognition)
 
         if config.get("interpreter_output", False):
@@ -65,12 +70,7 @@ def main() -> None:
                 print(explanation)
                 print(trace)
 
-    repl = SyntraREPL(
-        show_valon=config.get("enable_valon_output", True),
-        show_modi=config.get("enable_modi_output", True),
-        show_drift=config.get("enable_drift_output", True),
-        post_cycle=_post_cycle,
-    )
+    repl.post_cycle = _post_cycle
     repl.run()
 if __name__ == "__main__":
     main()
