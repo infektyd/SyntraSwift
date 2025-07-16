@@ -8,14 +8,14 @@ from utils.language_engine.core_brain import process_through_brains
 from utils.io_tools import load_config
 
 
-def run_language_loop(
+def run_language_cycle(
     input_text,
     show_valon=None,
     show_modi=None,
     show_drift=None,
     debug_output_trace: bool = False,
 ):
-    """Run the language loop with optional output toggles."""
+    """Return full cognition output while mirroring run_language_loop."""
     print(f"\n🧠 SYNTRA Observing: “{input_text}”")
 
     config = load_config()
@@ -45,5 +45,23 @@ def run_language_loop(
         print("\n🧠 MODI SAYS:\n", cognition["modi"])
     if show_drift:
         print("\n⚖️ SYNTRA DRIFT OUTPUT:\n", cognition["drift"])
-        
+
+    return cognition
+
+
+def run_language_loop(
+    input_text,
+    show_valon=None,
+    show_modi=None,
+    show_drift=None,
+    debug_output_trace: bool = False,
+):
+    """Run the language loop with optional output toggles."""
+    cognition = run_language_cycle(
+        input_text,
+        show_valon=show_valon,
+        show_modi=show_modi,
+        show_drift=show_drift,
+        debug_output_trace=debug_output_trace,
+    )
     return cognition["drift"]
