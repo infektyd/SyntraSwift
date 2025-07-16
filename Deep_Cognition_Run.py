@@ -154,6 +154,8 @@ def run_deep_cognition():
 if __name__ == "__main__":
     try:
         telemetry_thread = start_telemetry()
+        if telemetry_thread is not None:
+            print("[DEEP LOOP] Telemetry thread active")
         pdf_thread = threading.Thread(target=watch_pdf_folder, daemon=True)
         pdf_thread.start()
         run_deep_cognition()

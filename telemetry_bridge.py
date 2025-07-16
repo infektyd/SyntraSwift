@@ -1,4 +1,10 @@
-import pandas as pd
+try:
+    import pandas as pd
+except Exception:  # pragma: no cover - import best effort
+    pd = None
+    print("[SYNTRA][Telemetry] pandas not available; telemetry disabled.")
+
+TELEMETRY_ENABLED = pd is not None
 import time
 import os
 
@@ -18,6 +24,8 @@ FIELDS_OF_INTEREST = [
 ]
 
 def extract_latest_metrics(csv_path):
+    if not TELEMETRY_ENABLED:
+        return {}
     if not os.path.exists(csv_path):
         print("[SYNTRA][Telemetry] CSV not found.")
         return {}
@@ -39,6 +47,8 @@ def extract_latest_metrics(csv_path):
         return {}
 
 def live_feed_to_syntra():
+    if not TELEMETRY_ENABLED:
+        return
     print("[SYNTRA][Telemetry] Bridge running...")
     while True:
         metrics = extract_latest_metrics(CSV_PATH)
@@ -49,6 +59,9 @@ def live_feed_to_syntra():
 
 def start_telemetry():
     """Start the telemetry feed in a daemon thread."""
+    if not TELEMETRY_ENABLED:
+        print("[SYNTRA][Telemetry] Telemetry disabled.")
+        return None
     import threading
 
     thread = threading.Thread(target=live_feed_to_syntra, daemon=True)
