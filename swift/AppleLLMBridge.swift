@@ -1,5 +1,7 @@
 import Foundation
+#if canImport(FoundationNetworking)
 import FoundationNetworking
+#endif
 
 func queryAppleLLM(_ prompt: String) -> String {
     guard let apiKey = ProcessInfo.processInfo.environment["APPLE_LLM_API_KEY"] else {
@@ -21,30 +23,31 @@ func queryAppleLLM(_ prompt: String) -> String {
     request.httpBody = try? JSONSerialization.data(withJSONObject: body)
 
     let semaphore = DispatchSemaphore(value: 0)
-    var result = ""
+    final class Holder { var value: String = "" }
+    let resultHolder = Holder()
     let task = URLSession.shared.dataTask(with: request) { data, _, error in
-        defer { semaphore.signal() }
+        let res: String
         if let error = error {
-            result = "[apple llm error: \(error.localizedDescription)]"
-            return
-        }
-        guard let data = data else {
-            result = "[apple llm empty]"
-            return
-        }
-        if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-           let choices = json["choices"] as? [[String: Any]],
-           let message = choices.first?["message"] as? [String: Any],
-           let content = message["content"] as? String {
-            result = content
-        } else if let str = String(data: data, encoding: .utf8) {
-            result = str
+            res = "[apple llm error: \(error.localizedDescription)]"
+        } else if let data = data {
+            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let choices = json["choices"] as? [[String: Any]],
+               let message = choices.first?["message"] as? [String: Any],
+               let content = message["content"] as? String {
+                res = content
+            } else if let str = String(data: data, encoding: .utf8) {
+                res = str
+            } else {
+                res = "[apple llm parse error]"
+            }
         } else {
-            result = "[apple llm parse error]"
+            res = "[apple llm empty]"
         }
+        DispatchQueue.main.sync { resultHolder.value = res }
+        semaphore.signal()
     }
     task.resume()
     semaphore.wait()
-    logStage(stage: "apple_llm", output: ["prompt": prompt, "response": result], directory: "entropy_logs")
-    return result
+    logStage(stage: "apple_llm", output: ["prompt": prompt, "response": resultHolder.value], directory: "entropy_logs")
+    return resultHolder.value
 }
