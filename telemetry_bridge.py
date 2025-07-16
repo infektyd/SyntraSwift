@@ -1,3 +1,6 @@
+"""Lightweight telemetry utilities."""
+
+# pandas is optional; if missing the bridge simply no-ops
 try:
     import pandas as pd
 except Exception:  # pragma: no cover - import best effort

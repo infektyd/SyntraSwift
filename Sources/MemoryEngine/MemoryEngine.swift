@@ -1,11 +1,15 @@
 import Foundation
+#if canImport(FoundationNetworking)
 import FoundationNetworking
+#endif
 import Valon
 import Modi
 import Drift
 
 // Allow overriding the Apple LLM query for testing
-public var queryAppleLLM: (String, String?, String?) -> String = { _, _, _ in "[apple_llm_placeholder]" }
+public var queryAppleLLM: (String, String?, String?) -> String = { prompt, key, base in
+    performAppleLLMQuery(prompt, apiKey: key, apiBase: base)
+}
 
 public struct MemoryEngine {
     public init() {}
@@ -68,7 +72,7 @@ public func jsonString(_ obj: Any) -> String {
     return "{}"
 }
 
-public func queryAppleLLM(_ prompt: String, apiKey: String? = nil, apiBase: String? = nil) -> String {
+public func performAppleLLMQuery(_ prompt: String, apiKey: String? = nil, apiBase: String? = nil) -> String {
     let key = apiKey ?? ProcessInfo.processInfo.environment["APPLE_LLM_API_KEY"]
     let base = apiBase ?? ProcessInfo.processInfo.environment["APPLE_LLM_API_BASE"] ?? "http://localhost:1234"
     guard let url = URL(string: "\(base)/v1/chat/completions") else { return "[apple llm invalid url]" }

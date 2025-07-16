@@ -24,6 +24,8 @@ previously stored in `config.json`, but this file is now only a template.
    bridge prints a warning and continues without monitoring.
 6. To enable Apple's local LLM, define `apple_llm_api_base` and optionally
    `apple_llm_api_key` in your configuration or environment variables.
+7. To use the new FoundationModels bridge, set `USE_FOUNDATION_MODEL=1` in your
+   environment (macOS 15+ required).
 
 Example `config.local.json`:
 ```json
@@ -103,7 +105,8 @@ Key packages include:
 - `elevenlabs` – speech synthesis.
 - `PyPDF2` – PDF text extraction.
 - `pandas` – used in `telemetry_bridge.py` to parse telemetry logs. This
-  package is optional; without it the telemetry bridge is disabled.
+  package is optional; without it the telemetry bridge is disabled and
+  a warning is printed when the module is imported.
 - `spacy` – for linguistic analysis in the language engine.
 - `nltk` – provides WordNet lookups.
 - `requests` – needed by the Apple LLM and Phi‑3 bridges for HTTP calls.
