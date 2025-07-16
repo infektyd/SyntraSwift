@@ -5,6 +5,9 @@ struct SyntraConfig: Codable {
     var openaiApiBase: String?
     var openaiModel: String?
     var elevenlabsApiKey: String?
+    var appleLLMApiKey: String?
+    var appleLLMApiBase: String?
+    var useAppleLLM: Bool?
     var useMistralForValon: Bool?
     var preferredVoice: String?
     var driftRatio: [String: Double]?
