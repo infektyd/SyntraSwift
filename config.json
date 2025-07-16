@@ -18,5 +18,5 @@
   "telemetry_csv_path": "C:\\HWiNFO_logs\\syntra_runtime.csv",
   "apple_llm_api_key": "YOUR_APPLE_LLM_API_KEY",
   "apple_llm_api_base": "https://api.apple.com/llm",
-  "use_apple_llm": false
+  "use_apple_llm": true
 }
