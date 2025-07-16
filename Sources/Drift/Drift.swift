@@ -10,5 +10,5 @@ public struct Drift {
 }
 
 public func drift_average(_ valon: String, _ modi: [String]) -> [String: Any] {
-    Drift().average(valon: valon, modi: modi)
+    return Drift().average(valon: valon, modi: modi)
 }

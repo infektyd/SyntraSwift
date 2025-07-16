@@ -14,5 +14,5 @@ public struct Modi {
 }
 
 public func reflect_modi(_ content: String) -> [String] {
-    Modi().reflect(content)
+    return Modi().reflect(content)
 }
