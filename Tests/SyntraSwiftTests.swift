@@ -53,4 +53,32 @@ final class SyntraSwiftTests: XCTestCase {
         let m2 = apiResult["modi"] as? [String]
         XCTAssertEqual(m1, m2)
     }
+
+    func testLoadConfigAppleLLMFields() throws {
+        let tmp = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("cfg.json")
+        let json = """
+        {"use_apple_llm": true, "apple_llm_model": "test-model"}
+        """
+        try json.write(to: tmp, atomically: true, encoding: .utf8)
+        var cfg = try loadConfig(path: tmp.path)
+        XCTAssertEqual(cfg.useAppleLLM, true)
+        XCTAssertEqual(cfg.appleLLMModel, "test-model")
+
+        setenv("USE_APPLE_LLM", "false", 1)
+        setenv("APPLE_LLM_MODEL", "env-model", 1)
+        cfg = try loadConfig(path: tmp.path)
+        XCTAssertEqual(cfg.useAppleLLM, false)
+        XCTAssertEqual(cfg.appleLLMModel, "env-model")
+        unsetenv("USE_APPLE_LLM")
+        unsetenv("APPLE_LLM_MODEL")
+    }
+
+    func testProcessThroughBrainsAppleLLM() throws {
+        setenv("USE_APPLE_LLM", "true", 1)
+        queryAppleLLM = { _, _, _ in "apple" }
+        let result = processThroughBrains("hi")
+        unsetenv("USE_APPLE_LLM")
+        queryAppleLLM = { _, _, _ in "[apple_llm_placeholder]" }
+        XCTAssertEqual(result["appleLLM"] as? String, "apple")
+    }
 }

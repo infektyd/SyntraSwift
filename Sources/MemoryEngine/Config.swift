@@ -1,27 +1,24 @@
 import Foundation
 
-struct SyntraConfig: Codable {
-    var openaiApiKey: String?
-    var openaiApiBase: String?
-    var openaiModel: String?
-    var elevenlabsApiKey: String?
-    var appleLLMApiKey: String?
-    var appleLLMApiBase: String?
-    var useAppleLLM: Bool?
-    var useMistralForValon: Bool?
-    var preferredVoice: String?
-    var driftRatio: [String: Double]?
-    var enableValonOutput: Bool?
-    var enableModiOutput: Bool?
-    var enableDriftOutput: Bool?
-    var logSymbolicDrift: Bool?
-    var memoryMode: String?
-    var interpreterOutput: Bool?
-    var telemetryCsvPath: String?
-    var appleLLMApiKey: String?
-    var appleLLMApiBase: String?
-    var appleLLMModel: String?
-    var useAppleLLM: Bool?
+public struct SyntraConfig: Codable {
+    public var openaiApiKey: String?
+    public var openaiApiBase: String?
+    public var openaiModel: String?
+    public var elevenlabsApiKey: String?
+    public var useMistralForValon: Bool?
+    public var preferredVoice: String?
+    public var driftRatio: [String: Double]?
+    public var enableValonOutput: Bool?
+    public var enableModiOutput: Bool?
+    public var enableDriftOutput: Bool?
+    public var logSymbolicDrift: Bool?
+    public var memoryMode: String?
+    public var interpreterOutput: Bool?
+    public var telemetryCsvPath: String?
+    public var useAppleLLM: Bool?
+    public var appleLLMModel: String?
+    public var appleLLMApiKey: String?
+    public var appleLLMApiBase: String?
 
     enum CodingKeys: String, CodingKey {
         case openaiApiKey
@@ -38,19 +35,19 @@ struct SyntraConfig: Codable {
         case memoryMode
         case interpreterOutput
         case telemetryCsvPath
+        case useAppleLLM = "use_apple_llm"
+        case appleLLMModel = "apple_llm_model"
         case appleLLMApiKey = "apple_llm_api_key"
         case appleLLMApiBase = "apple_llm_api_base"
-        case appleLLMModel = "apple_llm_model"
-        case useAppleLLM = "use_apple_llm"
     }
 }
 
-enum ConfigError: Error {
+public enum ConfigError: Error {
     case notFound
     case invalid
 }
 
-func loadConfig(path: String = "config.json") throws -> SyntraConfig {
+public func loadConfig(path: String = "config.json") throws -> SyntraConfig {
     let searchPaths = [
         "config/config.local.json",
         "config.local.json",
@@ -76,10 +73,9 @@ func loadConfig(path: String = "config.json") throws -> SyntraConfig {
     let env = ProcessInfo.processInfo.environment
     if let val = env["OPENAI_API_KEY"] { cfg.openaiApiKey = val }
     if let val = env["ELEVENLABS_API_KEY"] { cfg.elevenlabsApiKey = val }
+    if let val = env["USE_APPLE_LLM"] { cfg.useAppleLLM = val.lowercased() == "true" }
     if let val = env["APPLE_LLM_MODEL"] { cfg.appleLLMModel = val }
     if let val = env["APPLE_LLM_API_KEY"] { cfg.appleLLMApiKey = val }
     if let val = env["APPLE_LLM_API_BASE"] { cfg.appleLLMApiBase = val }
-    if let val = env["USE_APPLE_LLM"] { cfg.useAppleLLM = (val as NSString).boolValue }
     return cfg
 }
-

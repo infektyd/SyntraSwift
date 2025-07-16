@@ -1,6 +1,6 @@
 """Simple REPL for interacting with SYNTRA."""
 
-from utils.language_engine.language_core import run_language_loop
+from utils.language_engine.language_core import run_language_cycle, run_language_loop
 from utils.io_tools import load_config
 
 
@@ -17,15 +17,17 @@ class SyntraREPL:
         self.show_modi = show_modi
         self.show_drift = show_drift
         self.post_cycle = post_cycle
+        self.last_cognition = None
 
     def run_cycle(self, user_input: str):
         """Process a single user input through the language loop."""
-        return run_language_loop(
+        self.last_cognition = run_language_cycle(
             user_input,
             show_valon=self.show_valon,
             show_modi=self.show_modi,
             show_drift=self.show_drift,
         )
+        return self.last_cognition["drift"]
 
     def run(self):
         """Prompt the user and print the DRIFT output."""

@@ -16,7 +16,6 @@ from PyPDF2 import PdfReader
 #from ingest.pdf_ingestor import load_new_pdfs
 from utils.pdf_ingest import watch_pdf_folder
 from utils.mistral_bridge import query_mistral
-from utils.drift_logger import log_drift
 from utils.entropy_guard import log_entropy_drift, trigger_dream
 from utils.language_engine import (
     reflect_valon,
@@ -155,6 +154,8 @@ def run_deep_cognition():
 if __name__ == "__main__":
     try:
         telemetry_thread = start_telemetry()
+        if telemetry_thread is not None:
+            print("[DEEP LOOP] Telemetry thread active")
         pdf_thread = threading.Thread(target=watch_pdf_folder, daemon=True)
         pdf_thread.start()
         run_deep_cognition()

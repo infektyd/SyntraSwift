@@ -20,6 +20,10 @@ previously stored in `config.json`, but this file is now only a template.
    in the repository root.
 4. Set `telemetry_csv_path` to the location of your telemetry log CSV if you
    want the bridge to monitor a custom file.
+5. Telemetry requires the optional `pandas` package. If it is missing, the
+   bridge prints a warning and continues without monitoring.
+6. To enable Apple's local LLM, define `apple_llm_api_base` and optionally
+   `apple_llm_api_key` in your configuration or environment variables.
 
 Example `config.local.json`:
 ```json
@@ -33,9 +37,9 @@ Example `config.local.json`:
   "drift_ratio": { "valon": 0.7, "modi": 0.3 },
   "memory_mode": "flat",
   "telemetry_csv_path": "C:\\HWiNFO_logs\\syntra_runtime.csv",
-  "apple_llm_api_key": "apple-key",
-  "apple_llm_api_base": "https://api.apple.com/llm",
-  "use_apple_llm": true
+  "apple_llm_api_base": "http://localhost:8080/v1",
+  "apple_llm_api_key": "apple-...",
+  "use_apple_llm": false
 }
 ```
 
@@ -86,18 +90,30 @@ Type `exit` or `quit` to close the console.
 
 ## Dependencies
 
-The core modules rely on the following Python packages:
+The core modules rely on several Python packages. The easiest way to install
+everything is to run:
+
+```bash
+pip install -r Requirements.txt
+```
+
+Key packages include:
 
 - `openai` – required for compatibility with LM Studio's local server.
 - `elevenlabs` – speech synthesis.
 - `PyPDF2` – PDF text extraction.
-- `pandas` – used in `telemetry_bridge.py` to parse telemetry logs.
+- `pandas` – used in `telemetry_bridge.py` to parse telemetry logs. This
+  package is optional; without it the telemetry bridge is disabled.
 - `spacy` – for linguistic analysis in the language engine.
 - `nltk` – provides WordNet lookups.
+- `requests` – needed by the Apple LLM and Phi‑3 bridges for HTTP calls.
 
-Install them with `pip install openai elevenlabs PyPDF2 pandas spacy nltk`.
-Some modules may require model downloads (e.g. `python -m spacy download
-en_core_web_sm`).
+Install them with `pip install openai tiktoken python-dotenv numpy fuzzywuzzy nltk`
+and any optional packages like `elevenlabs` or `spacy` as needed. Some modules
+may require model downloads (e.g. `python -m spacy download en_core_web_sm`).
+
+The project previously listed `sounddevice`, `pyttsx3` and `python-Levenshtein`
+in `Requirements.txt`, but these dependencies are no longer used.
 
 ## Swift components
 
@@ -113,6 +129,38 @@ API when `use_apple_llm` is enabled. The Python layer invokes this CLI through
 swift run --package-path . SyntraSwiftCLI <command> <args>
 ```
 
+If `use_apple_llm` is enabled in `config.local.json` or via the
+`USE_APPLE_LLM` environment variable, the `processThroughBrains` CLI will
+also send the raw user input to `queryAppleLLM`. This helper calls an
+Apple-provided local LLM using `apple_llm_api_base` and optionally
+`apple_llm_api_key`.
+
+### Using Xcode
+
+1. Open the Swift package in Xcode:
+
+   ```bash
+   open Package.swift
+   ```
+2. Select the **SyntraSwiftCLI** scheme.
+3. Build the project and run the tests with **Product → Test**.
+4. In the scheme's **Run** settings, provide any command-line arguments for
+   `SyntraSwiftCLI` so choosing **Product → Run** launches the executable with
+   those parameters.
+
+### Testing
+
+Run the Python test suite with:
+
+```bash
+python -m pytest
+```
+
+Run the Swift package tests with:
+
+```bash
+swift test
+```
 
 ## API keys
 

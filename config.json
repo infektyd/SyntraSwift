@@ -16,7 +16,7 @@
   "memory_mode": "flat",
   "interpreter_output": true,
   "telemetry_csv_path": "C:\\HWiNFO_logs\\syntra_runtime.csv",
+  "apple_llm_api_base": "http://localhost:8080/v1",
   "apple_llm_api_key": "YOUR_APPLE_LLM_API_KEY",
-  "apple_llm_api_base": "https://api.apple.com/llm",
-  "use_apple_llm": true
+  "use_apple_llm": false
 }

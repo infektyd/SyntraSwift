@@ -12,5 +12,5 @@ public struct Valon {
 }
 
 public func reflect_valon(_ content: String) -> String {
-    Valon().reflect(content)
+    return Valon().reflect(content)
 }
