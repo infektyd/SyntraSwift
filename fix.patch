@@ -1,0 +1,310 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2860
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 diff --git a/Sources/MemoryEngine/MemoryEngine.swift b/Sources/MemoryEngine/MemoryEngine.swift\
+index b8535412c2e06d2de7839417d075a263e86cc11c..80c31e41c6b64b517b47745d5541f78f9b320168 100644\
+--- a/Sources/MemoryEngine/MemoryEngine.swift\
++++ b/Sources/MemoryEngine/MemoryEngine.swift\
+@@ -1,33 +1,37 @@\
+ import Foundation\
++#if canImport(FoundationNetworking)\
+ import FoundationNetworking\
++#endif\
+ import Valon\
+ import Modi\
+ import Drift\
+ \
+ // Allow overriding the Apple LLM query for testing\
+-public var queryAppleLLM: (String, String?, String?) -> String = \{ _, _, _ in "[apple_llm_placeholder]" \}\
++public var queryAppleLLM: (String, String?, String?) -> String = \{ prompt, key, base in\
++    performAppleLLMQuery(prompt, apiKey: key, apiBase: base)\
++\}\
+ \
+ public struct MemoryEngine \{\
+     public init() \{\}\
+ \}\
+ \
+ func logStage(stage: String, output: Any, directory: String) \{\
+     let fm = FileManager.default\
+     if !fm.fileExists(atPath: directory) \{\
+         try? fm.createDirectory(atPath: directory, withIntermediateDirectories: true)\
+     \}\
+     let path = URL(fileURLWithPath: directory).appendingPathComponent("\\(stage).json")\
+     var data: [[String: Any]] = []\
+     if let d = try? Data(contentsOf: path),\
+        let j = try? JSONSerialization.jsonObject(with: d) as? [[String: Any]] \{\
+         data = j\
+     \}\
+     let entry: [String: Any] = ["timestamp": ISO8601DateFormatter().string(from: Date()),\
+                                 "output": output]\
+     data.append(entry)\
+     if let out = try? JSONSerialization.data(withJSONObject: data, options: [.prettyPrinted]) \{\
+         try? out.write(to: path)\
+     \}\
+ \}\
+ \
+ public func processThroughBrains(_ input: String) -> [String: Any] \{\
+@@ -46,51 +50,51 @@ public func processThroughBrains(_ input: String) -> [String: Any] \{\
+ \
+     var result: [String: Any] = [\
+         "valon": valon,\
+         "modi": modi,\
+         "drift": drift,\
+     ]\
+     if cfg.useAppleLLM == true \{\
+         let apple = queryAppleLLM(\
+             input,\
+             cfg.appleLLMApiKey,\
+             cfg.appleLLMApiBase\
+         )\
+         result["appleLLM"] = apple\
+     \}\
+     return result\
+ \}\
+ \
+ public func jsonString(_ obj: Any) -> String \{\
+     if let data = try? JSONSerialization.data(withJSONObject: obj, options: []),\
+        let str = String(data: data, encoding: .utf8) \{\
+         return str\
+     \}\
+     return "\{\}"\
+ \}\
+ \
+-public func queryAppleLLM(_ prompt: String, apiKey: String? = nil, apiBase: String? = nil) -> String \{\
++public func performAppleLLMQuery(_ prompt: String, apiKey: String? = nil, apiBase: String? = nil) -> String \{\
+     let key = apiKey ?? ProcessInfo.processInfo.environment["APPLE_LLM_API_KEY"]\
+     let base = apiBase ?? ProcessInfo.processInfo.environment["APPLE_LLM_API_BASE"] ?? "http://localhost:1234"\
+     guard let url = URL(string: "\\(base)/v1/chat/completions") else \{ return "[apple llm invalid url]" \}\
+     var request = URLRequest(url: url)\
+     request.httpMethod = "POST"\
+     request.addValue("application/json", forHTTPHeaderField: "Content-Type")\
+     if let key = key \{ request.addValue("Bearer \\(key)", forHTTPHeaderField: "Authorization") \}\
+     let payload: [String: Any] = [\
+         "model": "apple",\
+         "messages": [["role": "user", "content": prompt]],\
+     ]\
+     request.httpBody = try? JSONSerialization.data(withJSONObject: payload)\
+     let sem = DispatchSemaphore(value: 0)\
+     final class Holder \{ var value: String = "" \}\
+     let resultHolder = Holder()\
+     let config = URLSessionConfiguration.default\
+     config.timeoutIntervalForRequest = 10\
+     let session = URLSession(configuration: config)\
+     session.dataTask(with: request) \{ data, _, _ in\
+         let res: String\
+         if let data = data \{\
+             if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],\
+                let choices = json["choices"] as? [[String: Any]],\
+                let message = choices.first?["message"] as? [String: Any],\
+                let content = message["content"] as? String \{\
+diff --git a/swift/AppleLLMBridge.swift b/swift/AppleLLMBridge.swift\
+index a96349f07d7200130fa0359b18bba91b0bc171b3..ddb0bd49f51ba4fb54f197fe061d23a12ac8bf5f 100644\
+--- a/swift/AppleLLMBridge.swift\
++++ b/swift/AppleLLMBridge.swift\
+@@ -1,50 +1,53 @@\
+ import Foundation\
++#if canImport(FoundationNetworking)\
+ import FoundationNetworking\
++#endif\
+ \
+ func queryAppleLLM(_ prompt: String) -> String \{\
+     guard let apiKey = ProcessInfo.processInfo.environment["APPLE_LLM_API_KEY"] else \{\
+         let msg = "[Missing APPLE_LLM_API_KEY]"\
+         logStage(stage: "apple_llm", output: ["prompt": prompt, "response": msg], directory: "entropy_logs")\
+         return msg\
+     \}\
+     let base = ProcessInfo.processInfo.environment["APPLE_LLM_API_BASE"] ?? "https://api.apple.com/llm"\
+     guard let url = URL(string: "\\(base)/v1/chat/completions") else \{\
+         let msg = "[Invalid Apple LLM URL]"\
+         logStage(stage: "apple_llm", output: ["prompt": prompt, "response": msg], directory: "entropy_logs")\
+         return msg\
+     \}\
+     var request = URLRequest(url: url)\
+     request.httpMethod = "POST"\
+     request.addValue("Bearer \\(apiKey)", forHTTPHeaderField: "Authorization")\
+     request.addValue("application/json", forHTTPHeaderField: "Content-Type")\
+     let body: [String: Any] = ["prompt": prompt]\
+     request.httpBody = try? JSONSerialization.data(withJSONObject: body)\
+ \
+     let semaphore = DispatchSemaphore(value: 0)\
+-    var result = ""\
++    final class Holder \{ var value: String = "" \}\
++    let resultHolder = Holder()\
+     let task = URLSession.shared.dataTask(with: request) \{ data, _, error in\
+-        defer \{ semaphore.signal() \}\
++        let res: String\
+         if let error = error \{\
+-            result = "[apple llm error: \\(error.localizedDescription)]"\
+-            return\
+-        \}\
+-        guard let data = data else \{\
+-            result = "[apple llm empty]"\
+-            return\
+-        \}\
+-        if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],\
+-           let choices = json["choices"] as? [[String: Any]],\
+-           let message = choices.first?["message"] as? [String: Any],\
+-           let content = message["content"] as? String \{\
+-            result = content\
+-        \} else if let str = String(data: data, encoding: .utf8) \{\
+-            result = str\
++            res = "[apple llm error: \\(error.localizedDescription)]"\
++        \} else if let data = data \{\
++            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],\
++               let choices = json["choices"] as? [[String: Any]],\
++               let message = choices.first?["message"] as? [String: Any],\
++               let content = message["content"] as? String \{\
++                res = content\
++            \} else if let str = String(data: data, encoding: .utf8) \{\
++                res = str\
++            \} else \{\
++                res = "[apple llm parse error]"\
++            \}\
+         \} else \{\
+-            result = "[apple llm parse error]"\
++            res = "[apple llm empty]"\
+         \}\
++        DispatchQueue.main.sync \{ resultHolder.value = res \}\
++        semaphore.signal()\
+     \}\
+     task.resume()\
+     semaphore.wait()\
+-    logStage(stage: "apple_llm", output: ["prompt": prompt, "response": result], directory: "entropy_logs")\
+-    return result\
++    logStage(stage: "apple_llm", output: ["prompt": prompt, "response": resultHolder.value], directory: "entropy_logs")\
++    return resultHolder.value\
+ \}\
+diff --git a/swift/BrainEngine.swift b/swift/BrainEngine.swift\
+index 2e7cda60d1cddbc04dafdedd5ca3992e16b5a6d1..6f7189a11080e88e1a9f805c229d1453729f733f 100644\
+--- a/swift/BrainEngine.swift\
++++ b/swift/BrainEngine.swift\
+@@ -1,68 +1,68 @@\
+ import Foundation\
+ \
+ func logStage(stage: String, output: Any, directory: String) \{\
+     let fm = FileManager.default\
+     if !fm.fileExists(atPath: directory) \{\
+         try? fm.createDirectory(atPath: directory, withIntermediateDirectories: true)\
+     \}\
+     let path = URL(fileURLWithPath: directory).appendingPathComponent("\\(stage).json")\
+     var data: [[String: Any]] = []\
+     if let d = try? Data(contentsOf: path),\
+        let j = try? JSONSerialization.jsonObject(with: d) as? [[String: Any]] \{\
+         data = j\
+     \}\
+-    var entry: [String: Any] = ["timestamp": ISO8601DateFormatter().string(from: Date()),\
++    let entry: [String: Any] = ["timestamp": ISO8601DateFormatter().string(from: Date()),\
+                                 "output": output]\
+     data.append(entry)\
+     if let out = try? JSONSerialization.data(withJSONObject: data, options: [.prettyPrinted]) \{\
+         try? out.write(to: path)\
+     \}\
+ \}\
+ \
+ func reflect_valon(_ content: String) -> String \{\
+     let lower = content.lowercased()\
+     if lower.contains("warning") \{ return "cautious/alert" \}\
+     else if lower.contains("troubleshooting") \{ return "curious/focused" \}\
+     else if lower.contains("procedure") \{ return "structured/learning" \}\
+     return "neutral/observing"\
+ \}\
+ \
+ func reflect_modi(_ content: String) -> [String] \{\
+     var reasoning: [String] = []\
+     let lower = content.lowercased()\
+     if lower.contains("if") && lower.contains("then") \{ reasoning.append("conditional_logic") \}\
+     if lower.contains("torque") || lower.contains("psi") \{ reasoning.append("mechanical_precision") \}\
+     if lower.contains("diagram") \{ reasoning.append("visual_mapping") \}\
+     if reasoning.isEmpty \{ reasoning.append("baseline_analysis") \}\
+     return reasoning\
+ \}\
+ \
+ func drift_average(_ valon: String, _ modi: [String]) -> [String: Any] \{\
+     return ["emotion": valon,\
+             "logic": modi,\
+             "converged_state": "\\(valon) + \\(modi.joined(separator: ", "))"]\
+ \}\
+ \
+ func processThroughBrains(_ input: String) -> [String: Any] \{\
+     let valon = reflect_valon(input)\
+     logStage(stage: "valon_stage", output: valon, directory: "entropy_logs")\
+     let modi = reflect_modi(input)\
+     logStage(stage: "modi_stage", output: modi, directory: "entropy_logs")\
+-    var drift = drift_average(valon, modi)\
++    let drift = drift_average(valon, modi)\
+     logStage(stage: "drift_stage", output: drift, directory: "drift_logs")\
+ \
+     var result: [String: Any] = ["valon": valon, "modi": modi, "drift": drift]\
+     if let cfg = try? loadConfig(), cfg.useAppleLLM == true \{\
+         let apple = queryAppleLLM(input)\
+         result["appleLLM"] = apple\
+     \}\
+     return result\
+ \}\
+ \
+ func jsonString(_ obj: Any) -> String \{\
+     if let data = try? JSONSerialization.data(withJSONObject: obj, options: []),\
+        let str = String(data: data, encoding: .utf8) \{\
+         return str\
+     \}\
+     return "\{\}"\
+ \}\
+diff --git a/swift/Config.swift b/swift/Config.swift\
+index 6560df14390d9090190a58e8fe2bc35cda359aed..4e6720d446ce84c706b49d0f8a77b6550e842f3a 100644\
+--- a/swift/Config.swift\
++++ b/swift/Config.swift\
+@@ -1,49 +1,46 @@\
+ import Foundation\
+ \
+ struct SyntraConfig: Codable \{\
+     var openaiApiKey: String?\
+     var openaiApiBase: String?\
+     var openaiModel: String?\
+     var elevenlabsApiKey: String?\
+     var appleLLMApiKey: String?\
+     var appleLLMApiBase: String?\
+     var useAppleLLM: Bool?\
+     var useMistralForValon: Bool?\
+     var preferredVoice: String?\
+     var driftRatio: [String: Double]?\
+     var enableValonOutput: Bool?\
+     var enableModiOutput: Bool?\
+     var enableDriftOutput: Bool?\
+     var logSymbolicDrift: Bool?\
+     var memoryMode: String?\
+     var interpreterOutput: Bool?\
+     var telemetryCsvPath: String?\
+-    var appleLLMApiKey: String?\
+-    var appleLLMApiBase: String?\
+     var appleLLMModel: String?\
+-    var useAppleLLM: Bool?\
+ \
+     enum CodingKeys: String, CodingKey \{\
+         case openaiApiKey\
+         case openaiApiBase\
+         case openaiModel\
+         case elevenlabsApiKey\
+         case useMistralForValon\
+         case preferredVoice\
+         case driftRatio\
+         case enableValonOutput\
+         case enableModiOutput\
+         case enableDriftOutput\
+         case logSymbolicDrift\
+         case memoryMode\
+         case interpreterOutput\
+         case telemetryCsvPath\
+         case appleLLMApiKey = "apple_llm_api_key"\
+         case appleLLMApiBase = "apple_llm_api_base"\
+         case appleLLMModel = "apple_llm_model"\
+         case useAppleLLM = "use_apple_llm"\
+     \}\
+ \}\
+ \
+ enum ConfigError: Error \{\
+     case notFound\
+}
