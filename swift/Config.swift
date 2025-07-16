@@ -18,10 +18,7 @@ struct SyntraConfig: Codable {
     var memoryMode: String?
     var interpreterOutput: Bool?
     var telemetryCsvPath: String?
-    var appleLLMApiKey: String?
-    var appleLLMApiBase: String?
     var appleLLMModel: String?
-    var useAppleLLM: Bool?
 
     enum CodingKeys: String, CodingKey {
         case openaiApiKey
