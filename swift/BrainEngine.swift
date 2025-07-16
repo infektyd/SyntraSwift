@@ -56,6 +56,21 @@ func processThroughBrains(_ input: String) -> [String: Any] {
         let apple = queryAppleLLM(input)
         result["appleLLM"] = apple
     }
+    if let flag = ProcessInfo.processInfo.environment["USE_FOUNDATION_MODEL"],
+       flag == "1" {
+        if #available(macOS 15.0, *) {
+            let sem = DispatchSemaphore(value: 0)
+            var fmResult = ""
+            Task {
+                fmResult = (try? await queryFoundationModel(input)) ?? "[foundation model error]"
+                sem.signal()
+            }
+            _ = sem.wait(timeout: .now() + 15)
+            result["foundationModel"] = fmResult
+        } else {
+            result["foundationModel"] = "[foundation model unavailable]"
+        }
+    }
     return result
 }
 
