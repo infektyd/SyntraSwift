@@ -105,7 +105,8 @@ Key packages include:
 - `elevenlabs` – speech synthesis.
 - `PyPDF2` – PDF text extraction.
 - `pandas` – used in `telemetry_bridge.py` to parse telemetry logs. This
-  package is optional; without it the telemetry bridge is disabled.
+  package is optional; without it the telemetry bridge is disabled and
+  a warning is printed when the module is imported.
 - `spacy` – for linguistic analysis in the language engine.
 - `nltk` – provides WordNet lookups.
 - `requests` – needed by the Apple LLM and Phi‑3 bridges for HTTP calls.
