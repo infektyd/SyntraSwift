@@ -101,7 +101,6 @@ pip install -r Requirements.txt
 
 Key packages include:
 
-- `openai` – required for compatibility with LM Studio's local server.
 - `elevenlabs` – speech synthesis.
 - `PyPDF2` – PDF text extraction.
 - `pandas` – used in `telemetry_bridge.py` to parse telemetry logs. This
